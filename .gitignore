@@ -1,0 +1,11 @@
+# 忽略 CMake 生成的文件和目录
+**/cmake-build-debug
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+/build/
+
+# 忽略 IntelliJ IDEA 配置文件和项目文件
+.idea/
+*.iml
