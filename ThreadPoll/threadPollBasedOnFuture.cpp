@@ -11,7 +11,7 @@
 #include <future>
 #include <functional>
 #include <stdexcept>
-
+#include <random>
 class ThreadPool {
 public:
     // 构造函数：创建指定数量的工作线程
@@ -105,14 +105,19 @@ ThreadPool::~ThreadPool() {
 int main() {
     ThreadPool pool(4); // 创建一个包含4个线程的线程池
     std::vector<std::future<int>> results;
-
+    std::random_device rd;
+    // 使用 Mersenne Twister 伪随机数生成器
+    std::mt19937 gen(rd());
+    // 定义一个均匀分布，生成范围在 1 到 100 之间的整数
+    std::uniform_int_distribution<> distrib(100, 1000);
     // 提交8个任务到线程池
-    for (int i = 0; i < 8; ++i) {
+    for (int i = 0; i < 80; ++i) {
         results.emplace_back(
-            pool.enqueue([i] {
+            pool.enqueue([i, gen, distrib] mutable {
                 std::cout << "正在处理任务 " << i << std::endl;
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
-                std::cout << "完成任务 " << i << std::endl;
+                int t_sec = distrib(gen);
+                std::this_thread::sleep_for(std::chrono::milliseconds(t_sec));
+                std::cout <<t_sec<< "ms后完成任务 " << i << std::endl;
                 return i * i;
             })
         );
